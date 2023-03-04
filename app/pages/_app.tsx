@@ -61,8 +61,8 @@ const theme = extendTheme({
   styles: {
     global: {
       "*": {
-        fontFamily: "Inter",
-        color: "white",
+        fontFamily: "Plus Jakarta Sans",
+        color: "black",
       },
       a: {
         _hover: {
