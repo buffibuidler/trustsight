@@ -334,3 +334,119 @@
   outline: none !important;
   box-shadow: none !important;
 }
+
+.header {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 40px;
+  text-align: center;
+}
+
+.subheader {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 25px;
+  display: flex;
+  align-items: center;
+
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.projectCard {
+  width: 266px;
+  height: 266px;
+
+  background: #ffffff;
+  box-shadow: 0px 0px 10px 10px rgba(0, 0, 0, 0.03);
+  border-radius: 20px;
+}
+
+.projectImage {
+  width: 266px;
+  height: 192px;
+  border-radius: 20px 20px 0px 0px;
+  object-fit: cover;
+}
+
+.projectTitle {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 20px;
+  text-align: center;
+  color: #000000;
+}
+
+.projectSubtitle {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 14px;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.blackstar {
+  width: 17px;
+  height: 16px;
+}
+
+.projectTextContainer {
+  width: 100%;
+  justify-content: space-between !important;
+  padding: 0 1rem;
+}
+
+.reviewImage {
+  width: 56px;
+  height: 55px;
+}
+
+.star {
+  width: 25px;
+}
+
+.bold {
+  font-weight: 700;
+}
+
+.review {
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 18px;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.reviewCard {
+  width: 266px;
+  height: 266px;
+
+  background: #ffffff;
+  box-shadow: 0px 0px 10px 10px rgba(0, 0, 0, 0.03);
+  border-radius: 20px;
+
+  padding: 1rem;
+}
+
+.specialWord2 {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 18px;
+  text-align: center;
+
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.carousel {
+  width: 100%;
+  justify-content: space-between;
+  padding: 0 1rem;
+}
+
+.selected {
+  color: black !important;
+  border-bottom: 3px solid black;
+}

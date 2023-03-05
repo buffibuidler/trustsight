@@ -1,3 +1,17 @@
+export const categories = [
+  "DAO",
+  "DeFi",
+  "NFT",
+  "Gaming",
+  "Metaverse",
+  "Social",
+  "Security",
+  "Infrastructure",
+  "Wallet",
+  "Identity",
+  "ReFi",
+];
+
 export const featuredProjects = [
   {
     title: "Nouns DAO",
