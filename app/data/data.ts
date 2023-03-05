@@ -1,7 +1,7 @@
 export const categories = [
-  "DAO",
   "DeFi",
   "NFT",
+  "DAO",
   "Gaming",
   "Metaverse",
   "Social",
@@ -75,6 +75,93 @@ export const featuredReviews = [
     recipient: "Nouns DAO",
     review:
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.",
+  },
+];
+
+export const defiProjects = [
+  {
+    title: "Velodrome",
+    image: "/velodrome.png",
+    score: 4.86,
+    address: "0xFeebabE6b0418eC13b30aAdF129F5DcDd4f70CeA",
+    reviews: 29,
+  },
+  {
+    title: "Synthetix",
+    image: "/synthetix.png",
+    score: 4.79,
+    address: "0x533e3c0e6b48010873b947bddc4721b1bdff9648",
+    reviews: 26,
+  },
+  {
+    title: "Aave",
+    image: "/aave.jpg",
+    score: 4.73,
+    address: "0x362bc847a3a9637d3af6624eec853618a43ed7d2",
+    reviews: 23,
+  },
+  {
+    title: "Uniswap V3",
+    image: "/uni.png",
+    score: 4.72,
+    address: "0xA34F0D0314db32f41e1194816d56d55D1F7Ca7b5",
+    reviews: 38,
+  },
+  {
+    title: "PoolTogether",
+    image: "/pool.jpg",
+    score: 4.69,
+    address: "0x3993d34e7e99Abf6B6f367309975d1360222D446",
+    reviews: 34,
+  },
+  {
+    title: "Lyra Finance",
+    image: "/lyra.png",
+    score: 4.66,
+    address: "0xa57Bd00134B2850B2a1c55860c9e9ea100fDd6CF",
+    reviews: 18,
+  },
+  {
+    title: "Curve",
+    image: "/curve.png",
+    score: 4.57,
+    address: "0xD51a44d3FaE010294C616388b506AcdA1bfAAE46",
+    reviews: 29,
+  },
+  {
+    title: "Stargate",
+    image: "/stargate.jpg",
+    score: 4.56,
+    address: "0x9507c04B10486547584C37bCBd931B2a4FeE9A41",
+    reviews: 17,
+  },
+  {
+    title: "Beefy Finance",
+    image: "/beefy.png",
+    score: 4.44,
+    address: "0x4585FE77225b41b697C938B018E2Ac67Ac5a20c0",
+    reviews: 11,
+  },
+  {
+    title: "Perpetual",
+    image: "/perpetual.png",
+    score: 4.42,
+    address: "0x280027dd00eE0050d3F9d168EFD6B40090009246",
+    reviews: 14,
+  },
+  {
+    title: "Synapse",
+    image: "/synapse.png",
+    score: 4.38,
+    address: "0x99a58482BD75cbab83b27EC03CA68fF489b5788f",
+    reviews: 17,
+  },
+  {
+    title: "QiDao",
+    image: "/mai.png",
+    score: 4.13,
+    address: "0xAAeCf92bEe252Ad8a31FDB66aa80E733Aa7dE609",
+    reviews: 8,
   },
 ];
 

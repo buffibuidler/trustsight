@@ -659,3 +659,90 @@
 .largestar {
   width: 35px;
 }
+
+.modalContent {
+  max-width: 800px !important;
+  border-radius: 25px !important;
+  padding: 1rem 0 1rem 0;
+}
+
+.modalHeader {
+  text-align: center;
+}
+
+.modalImage {
+  width: 69.74px;
+  height: 69.74px;
+  border-radius: 10px;
+}
+
+.modalTitle {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 32px;
+
+  text-align: center;
+  color: #000000;
+}
+
+.modalAddress {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 16px;
+  text-align: center;
+
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.modalTitleSection {
+  align-items: flex-start !important;
+  padding-left: 0.5rem;
+}
+
+.trustScore {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 30px;
+
+  color: #000000;
+}
+
+.modalTopSection {
+  width: 100%;
+  justify-content: space-between;
+  padding: 0 1rem;
+}
+
+.subHeader {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 25px;
+
+  color: #000000;
+}
+
+.yourReview {
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 40px;
+
+  color: #000000;
+}
+
+.modalFooter {
+  width: 100%;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+.submitButton {
+  width: 188px !important;
+  height: 46px !important;
+  background: #8a8a8a !important;
+  color: white !important;
+  border-radius: 20px !important;
+}

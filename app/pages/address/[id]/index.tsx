@@ -1,11 +1,32 @@
 import styles from "@styles/Home.module.css";
-import { HStack, Image, VStack, Text, Box } from "@chakra-ui/react";
+import {
+  HStack,
+  Image,
+  VStack,
+  Text,
+  Box,
+  useDisclosure,
+  Button,
+  SimpleGrid,
+  Textarea,
+} from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { mockAddresses, mockReviews } from "@data/data";
 import { abridgeAddress, capitalizeFirstLetter } from "@utils/utils";
 import { Select } from "@chakra-ui/react";
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+} from "@chakra-ui/react";
 
 function Profile() {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   const router = useRouter();
   const { id: address } = router.query;
 
@@ -27,6 +48,85 @@ function Profile() {
 
   return (
     <main className={styles.main}>
+      <Modal isOpen={isOpen} onClose={onClose} isCentered>
+        <ModalOverlay />
+        <ModalContent className={styles.modalContent}>
+          <ModalHeader className={styles.modalHeader}>
+            <Text className={styles.yourReview}>Your Review</Text>
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <VStack>
+              <HStack className={styles.modalTopSection}>
+                <HStack>
+                  <Image
+                    src={image}
+                    alt={image}
+                    className={styles.modalImage}
+                  ></Image>
+                  <VStack className={styles.modalTitleSection}>
+                    <Text className={styles.modalTitle}>{title}</Text>
+                    <Text className={styles.modalAddress}>
+                      {abridgeAddress(address as string)}
+                    </Text>
+                  </VStack>
+                </HStack>
+                <HStack gap={2}>
+                  <Text className={styles.trustScore}>Trust Score</Text>
+                  <HStack>
+                    {new Array(5).fill(0).map((_, idx) => (
+                      <Image
+                        src="/blankstar.png"
+                        alt="yo"
+                        key={idx}
+                        className={styles.largestar}
+                      />
+                    ))}
+                  </HStack>
+                </HStack>
+              </HStack>
+              <Box h="10px"></Box>
+              <HStack>
+                <VStack className={styles.categoryPill}>
+                  <Text className={styles.categoryPillText}>{category}</Text>
+                </VStack>
+                <Text className={styles.subHeader}>
+                  Category scores (optional)
+                </Text>
+              </HStack>
+              <Box h="10px"></Box>
+              <SimpleGrid columns={2} gap={6}>
+                {subscores.map((val) => (
+                  <HStack key={val}>
+                    <Text className={styles.subHeader} w="130px">
+                      {capitalizeFirstLetter(val)}
+                    </Text>
+                    <HStack>
+                      {new Array(5).fill(0).map((_, idx) => (
+                        <Image
+                          src="/blankstar.png"
+                          alt="yo"
+                          key={idx}
+                          className={styles.largestar}
+                        />
+                      ))}
+                    </HStack>
+                  </HStack>
+                ))}
+              </SimpleGrid>
+              <Box h="15px"></Box>
+              <VStack w="100%" alignItems="flex-start">
+                <Text className={styles.trustScore}>Comments</Text>
+                <Box h="5px"></Box>
+                <Textarea placeholder="Write your review" />
+              </VStack>
+            </VStack>
+          </ModalBody>
+          <ModalFooter className={styles.modalFooter}>
+            <Button className={styles.submitButton}>Submit review</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
       <HStack>
         <VStack className={styles.leftSection}>
           <VStack className={styles.stickySection}>
@@ -36,17 +136,19 @@ function Profile() {
               className={styles.profileImage}
             ></Image>
             <Box h="10px"></Box>
-            <HStack>
-              {new Array(5).fill(0).map((_, idx) => (
-                <Image
-                  src="/blankstar.png"
-                  alt="yo"
-                  key={idx}
-                  className={styles.largestar}
-                />
-              ))}
-            </HStack>
-            <Text>Review this address</Text>
+            <VStack>
+              <HStack onClick={onOpen}>
+                {new Array(5).fill(0).map((_, idx) => (
+                  <Image
+                    src="/blankstar.png"
+                    alt="yo"
+                    key={idx}
+                    className={styles.largestar}
+                  />
+                ))}
+              </HStack>
+              <Text>Review this address</Text>
+            </VStack>
           </VStack>
         </VStack>
         <VStack>
