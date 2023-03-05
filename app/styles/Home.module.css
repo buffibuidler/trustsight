@@ -8,14 +8,12 @@
 }
 
 .description {
-  display: inherit;
-  justify-content: inherit;
-  align-items: inherit;
-  font-size: 0.85rem;
-  max-width: var(--max-width);
-  width: 100%;
-  z-index: 2;
-  font-family: var(--font-mono);
+  font-style: normal;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 32px;
+
+  color: #000000;
 }
 
 .description a {
@@ -449,4 +447,215 @@
 .selected {
   color: black !important;
   border-bottom: 3px solid black;
+}
+
+.profileImage {
+  width: 266px;
+  height: 266px;
+  border-radius: 20px;
+}
+
+.leftSection {
+  width: 100%;
+  height: 100%;
+  justify-content: flex-start !important;
+}
+
+.stickySection {
+  position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+  top: 100px;
+}
+
+.rightSection {
+  width: 100%;
+  align-items: flex-start !important;
+}
+
+.profileTitle {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 48px;
+  line-height: 60px;
+
+  color: #000000;
+}
+
+.profileSubtitle {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 25px;
+  text-align: center;
+
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.categoryPill {
+  width: 84px;
+  height: 31px;
+  padding: 5px;
+  background: #2a46eb;
+  border-radius: 20px;
+}
+
+.categoryPillText {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 20px;
+
+  color: #ffffff;
+}
+
+.scoreText {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 25px;
+  text-align: center;
+
+  color: #000000;
+}
+
+.reviewsText {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 20px;
+
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.reviewsContainer {
+  width: 100%;
+  align-items: flex-start !important;
+  gap: 1rem;
+}
+
+.reviewsHeader {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 30px;
+
+  color: #000000;
+}
+
+.reviewsScorebarContainer {
+  align-items: flex-start !important;
+  gap: 1rem;
+}
+
+.categoryTitle {
+  width: 150px;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 25px;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.categoryScore {
+  padding-left: 0.5rem;
+
+  font-style: normal;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 20px;
+  text-align: center;
+
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.scoreBarContainer {
+  position: relative;
+  width: 600px;
+  height: 10px;
+  background: rgba(217, 217, 217, 0.59);
+  border-radius: 10px;
+}
+
+.scoreBar {
+  position: absolute;
+  width: 75%;
+  height: 100%;
+  background-color: #fecd27;
+  border-radius: 10px;
+}
+
+.filterLabel {
+  width: 80px;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 20px;
+
+  color: #000000;
+}
+
+.select {
+  width: 200px !important;
+}
+
+.filterContainer {
+  width: 100%;
+  justify-content: flex-start !important;
+}
+
+.reviewContainer {
+  padding: 2rem;
+  background: #ffffff;
+  box-shadow: 0px 0px 10px 10px rgba(0, 0, 0, 0.03);
+  border-radius: 20px;
+}
+
+.leftReviewSection {
+  align-items: flex-start !important;
+  gap: 0 !important;
+  padding-right: 1rem;
+}
+
+.rightTopSection {
+  width: 100%;
+  justify-content: space-between !important;
+}
+
+.reviewReviewer {
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 14px;
+
+  color: #000000;
+}
+
+.reviewScore {
+  margin-left: 6px !important;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 14px;
+
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.reviewDate {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 18px;
+
+  color: #000000;
+}
+
+.reviewDescription {
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 18px;
+
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.largestar {
+  width: 35px;
 }

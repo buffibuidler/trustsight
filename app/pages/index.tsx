@@ -2,7 +2,7 @@ import { Search2Icon } from "@chakra-ui/icons";
 import { HStack, VStack, Text, Input, Image, Box } from "@chakra-ui/react";
 import { categories, featuredProjects, featuredReviews } from "@data/data";
 import styles from "@styles/Home.module.css";
-import { abridgeAddress } from "@utils/abridgeAddress";
+import { abridgeAddress } from "@utils/utils";
 import { useState } from "react";
 
 export default function Home() {

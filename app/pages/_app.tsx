@@ -19,6 +19,9 @@ import Head from "next/head";
 import Navbar from "@components/Navbar";
 import merge from "lodash.merge";
 
+import { selectAnatomy } from "@chakra-ui/anatomy";
+import { createMultiStyleConfigHelpers } from "@chakra-ui/react";
+
 const mantle = {
   id: 5001,
   name: "Mantle",
@@ -57,6 +60,21 @@ const wagmiClient = createClient({
   provider,
 });
 
+const { definePartsStyle, defineMultiStyleConfig } =
+  createMultiStyleConfigHelpers(selectAnatomy.keys);
+
+const custom = definePartsStyle({
+  field: {
+    background: "blue.100",
+    borderRadius: "20px !important",
+    fontWeight: "700 !important",
+  },
+});
+
+const selectTheme = defineMultiStyleConfig({
+  variants: { custom },
+});
+
 const theme = extendTheme({
   styles: {
     global: {
@@ -70,6 +88,7 @@ const theme = extendTheme({
         },
       },
     },
+    components: { Select: selectTheme },
   },
 });
 
