@@ -6,8 +6,6 @@ This project was built specifically for the 2023 ETHDenver #BUIDLATHON.
 
 ## Introduction
 
-> Anonymity breeds meanness. - Sam Altman
-
 ![](/landing.png)
 
 TrustSight is an EigenTrust-powered Web3 Reputation Crowdsourcing Platform
