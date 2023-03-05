@@ -13,6 +13,8 @@ import {
   Link as ChakraLink,
 } from "@chakra-ui/react";
 import { ethers } from "ethers";
+import { useWeb3Modal } from "@web3modal/react";
+
 import { useRouter } from "next/router";
 import { mockAddresses, mockReviews } from "@data/data";
 import {
@@ -62,12 +64,12 @@ function Profile() {
     isConnecting,
     isDisconnected,
   } = useAccount();
-  // const { isOpen: isModalOpen, open, close, setDefaultChain } = useWeb3Modal();
+  const { isOpen: isModalOpen, open, close, setDefaultChain } = useWeb3Modal();
 
   const router = useRouter();
   const { id: address } = router.query;
 
-  const account = mockAddresses[address as string];
+  let account = mockAddresses[address as string];
   const reviewList = mockReviews[address as string];
 
   function handleSetFive() {
@@ -201,9 +203,14 @@ function Profile() {
     setAttestationMap(attestationDeepCopy);
   }, [account, address]);
 
-  if (!account || !eventLogMap) return null;
-
-  console.log(Object.keys(eventLogMap));
+  if (!account || !eventLogMap) {
+    account = {
+      score: 0,
+      address: address,
+      reviews: 0,
+      flags: 0,
+    };
+  }
 
   const {
     title,
@@ -244,7 +251,9 @@ function Profile() {
   }
 
   function handleReview() {
-    if (balance.value.lte(ethers.utils.parseEther("0.01"))) {
+    if (!connectedAddress) {
+      open();
+    } else if (balance.value.lte(ethers.utils.parseEther("0.01"))) {
       triggerCypher();
     } else {
       onOpen();
@@ -272,11 +281,18 @@ function Profile() {
               <VStack>
                 <HStack className={styles.modalTopSection}>
                   <HStack>
-                    <Image
-                      src={image}
-                      alt={image}
-                      className={styles.modalImage}
-                    ></Image>
+                    {image ? (
+                      <Image
+                        src={image}
+                        alt={image}
+                        className={styles.modalImage}
+                      ></Image>
+                    ) : (
+                      <Identicon
+                        string={address as string}
+                        className={styles.modalImage}
+                      />
+                    )}
                     <VStack className={styles.modalTitleSection}>
                       <Text className={styles.modalTitle}>{title}</Text>
                       <Text className={styles.modalAddress}>
@@ -496,7 +512,9 @@ function Profile() {
                 />
               ))}
               <Text className={styles.scoreText}>
-                {eventLogMap["trustsight.trust"] / 100}
+                {isNaN(eventLogMap["trustsight.trust"] / 100)
+                  ? 0
+                  : eventLogMap["trustsight.trust"] / 100}
               </Text>
               <Text className={styles.reviewsText}>· {reviews} reviews</Text>
             </HStack>
@@ -648,67 +666,73 @@ function Profile() {
                     ) : (
                       <Text>No reviews available.</Text>
                     )} */}
-                    {reviewList
-                      .filter((val) => (five ? val.stars === 500 : true))
-                      .map(({ reviewer, score, stars, review, createdAt }) => (
-                        <HStack
-                          key={reviewer}
-                          className={styles.reviewContainer}
-                        >
-                          <VStack className={styles.leftReviewSection}>
-                            <Identicon
-                              string={reviewer as string}
-                              className={styles.reviewImage}
-                            />
-                            <Text className={styles.reviewReviewer}>
-                              {abridgeAddress(reviewer)}
-                            </Text>
-                            <HStack>
-                              <Image
-                                alt="yo"
-                                src="/blackstar.png"
-                                className={styles.blackstar}
-                                opacity={0.5}
-                              ></Image>
-                              <Text className={styles.reviewScore}>
-                                {score}
-                              </Text>
+                    {reviewList ? (
+                      reviewList
+                        .filter((val) => (five ? val.stars === 500 : true))
+                        .map(
+                          ({ reviewer, score, stars, review, createdAt }) => (
+                            <HStack
+                              key={reviewer}
+                              className={styles.reviewContainer}
+                            >
+                              <VStack className={styles.leftReviewSection}>
+                                <Identicon
+                                  string={reviewer as string}
+                                  className={styles.reviewImage}
+                                />
+                                <Text className={styles.reviewReviewer}>
+                                  {abridgeAddress(reviewer)}
+                                </Text>
+                                <HStack>
+                                  <Image
+                                    alt="yo"
+                                    src="/blackstar.png"
+                                    className={styles.blackstar}
+                                    opacity={0.5}
+                                  ></Image>
+                                  <Text className={styles.reviewScore}>
+                                    {score}
+                                  </Text>
+                                </HStack>
+                              </VStack>
+                              <VStack className={styles.rightReviewSection}>
+                                <HStack className={styles.rightTopSection}>
+                                  <HStack>
+                                    {new Array(Math.round(stars / 100))
+                                      .fill(0)
+                                      .map((_, idx) => (
+                                        <Image
+                                          src="/star.png"
+                                          alt="yo"
+                                          key={idx}
+                                          className={styles.star}
+                                        />
+                                      ))}
+                                    {new Array(5 - Math.round(stars / 100))
+                                      .fill(0)
+                                      .map((_, idx) => (
+                                        <Image
+                                          src="/greystar.png"
+                                          alt="yo"
+                                          key={idx}
+                                          className={styles.star}
+                                        />
+                                      ))}
+                                  </HStack>
+                                  <Text className={styles.reviewDate}>
+                                    {new Date(createdAt).toDateString()}
+                                  </Text>
+                                </HStack>
+                                <Text className={styles.reviewDescription}>
+                                  {review}
+                                </Text>
+                              </VStack>
                             </HStack>
-                          </VStack>
-                          <VStack className={styles.rightReviewSection}>
-                            <HStack className={styles.rightTopSection}>
-                              <HStack>
-                                {new Array(Math.round(stars / 100))
-                                  .fill(0)
-                                  .map((_, idx) => (
-                                    <Image
-                                      src="/star.png"
-                                      alt="yo"
-                                      key={idx}
-                                      className={styles.star}
-                                    />
-                                  ))}
-                                {new Array(5 - Math.round(stars / 100))
-                                  .fill(0)
-                                  .map((_, idx) => (
-                                    <Image
-                                      src="/greystar.png"
-                                      alt="yo"
-                                      key={idx}
-                                      className={styles.star}
-                                    />
-                                  ))}
-                              </HStack>
-                              <Text className={styles.reviewDate}>
-                                {new Date(createdAt).toDateString()}
-                              </Text>
-                            </HStack>
-                            <Text className={styles.reviewDescription}>
-                              {review}
-                            </Text>
-                          </VStack>
-                        </HStack>
-                      ))}
+                          )
+                        )
+                    ) : (
+                      <Text>No reviews available.</Text>
+                    )}
                   </VStack>
                 </TabPanel>
                 <TabPanel>

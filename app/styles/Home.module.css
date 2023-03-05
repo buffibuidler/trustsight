@@ -696,9 +696,9 @@
 }
 
 .modalImage {
-  width: 69.74px;
-  height: 69.74px;
-  border-radius: 10px;
+  width: 69.74px !important;
+  height: 69.74px !important;
+  border-radius: 10px !important;
 }
 
 .modalTitle {

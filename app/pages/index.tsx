@@ -3,7 +3,7 @@ import { HStack, VStack, Text, Input, Image, Box } from "@chakra-ui/react";
 import withTransition from "@components/withTransition";
 import { categories, featuredProjects, featuredReviews } from "@data/data";
 import styles from "@styles/Home.module.css";
-import { abridgeAddress } from "@utils/utils";
+import { abridgeAddress, isValidEthereumAddress } from "@utils/utils";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
@@ -11,6 +11,18 @@ function Home() {
   const router = useRouter();
   const [selected, setSelected] = useState("DAO");
   const isNavbar = false;
+  const [inputValue, setInputValue] = useState("");
+
+  function handleInputChange(e: any) {
+    setInputValue(e.target.value);
+  }
+
+  function handleNavigation(e: any) {
+    e.preventDefault();
+    if (!isValidEthereumAddress(inputValue)) return;
+    if (inputValue.length === 0) return;
+    router.push(`/address/${inputValue}`);
+  }
 
   return (
     <main className={styles.main}>
@@ -22,10 +34,14 @@ function Home() {
         </Text>
         <HStack className={!isNavbar ? styles.searchbar : styles.searchbarMini}>
           <Search2Icon color="black" />
-          <Input
-            className={styles.searchInput}
-            placeholder="Search by address or ENS"
-          ></Input>
+          <form onSubmit={handleNavigation} style={{ width: "100%" }}>
+            <Input
+              className={styles.searchInput}
+              placeholder="Search by address or ENS"
+              onSubmit={handleNavigation}
+              onChange={handleInputChange}
+            ></Input>
+          </form>
         </HStack>
       </VStack>
       <Box h="100px" />
