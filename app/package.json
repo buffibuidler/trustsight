@@ -21,9 +21,12 @@
     "eslint-config-next": "13.2.3",
     "ethers": "^5.7.2",
     "framer-motion": "^10.0.1",
+    "minidenticons": "^2.0.0",
     "next": "13.2.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-icons": "^4.8.0",
+    "react-identicons": "^1.2.5",
     "typescript": "4.9.5",
     "wagmi": "^0.11.7"
   }

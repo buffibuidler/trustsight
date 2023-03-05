@@ -88,7 +88,9 @@ const theme = extendTheme({
         },
       },
     },
-    components: { Select: selectTheme },
+    components: {
+      Select: selectTheme,
+    },
   },
 });
 

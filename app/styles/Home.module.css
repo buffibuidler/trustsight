@@ -450,13 +450,13 @@
 }
 
 .profileImage {
-  width: 266px;
-  height: 266px;
+  width: 266px !important;
+  height: 266px !important;
   border-radius: 20px;
 }
 
 .leftSection {
-  width: 100%;
+  width: 30%;
   height: 100%;
   justify-content: flex-start !important;
 }
@@ -467,6 +467,10 @@
 }
 
 .rightSection {
+  width: 70%;
+}
+
+.rightInnerSection {
   width: 100%;
   align-items: flex-start !important;
 }
@@ -491,10 +495,14 @@
 }
 
 .categoryPill {
-  width: 84px;
-  height: 31px;
-  padding: 5px;
+  padding: 5px 15px;
   background: #2a46eb;
+  border-radius: 20px;
+}
+
+.scamPill {
+  padding: 5px 15px;
+  background: #ff3a3e;
   border-radius: 20px;
 }
 
@@ -524,6 +532,15 @@
   line-height: 20px;
 
   color: rgba(0, 0, 0, 0.5);
+}
+
+.reviewsSubtext {
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 15px;
+  text-align: center;
+
+  color: #ff3a3e;
 }
 
 .reviewsContainer {
