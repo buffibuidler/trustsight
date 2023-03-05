@@ -18,14 +18,14 @@ export const featuredProjects = [
     image: "/nouns.jpg",
     score: 4.86,
     address: "0xFeebabE6b0418eC13b30aAdF129F5DcDd4f70CeA",
-    reviews: 4029,
+    reviews: 29,
   },
   {
     title: "Spork DAO",
     image: "/spork.png",
     score: 4.96,
     address: "0xe688b84b23f322a994a53dbf8e15fa82cdb71127",
-    reviews: 1934,
+    reviews: 29,
   },
   {
     title: "Developer DAO",
@@ -171,7 +171,7 @@ export const mockAddresses = {
     image: "/velodrome.png",
     score: 4.22,
     address: "0x9c12939390052919aF3155f41Bf4160Fd3666A6f",
-    reviews: 1934,
+    reviews: 29,
     category: "DeFi",
     description:
       "Velodrome Finance, at its core, is a solution for protocols on Optimism to properly incentivize liquidity for their own use cases. Building on top of the groundwork laid out by Solidly, our team has addressed that first iteration's core issues to realize its full potential.",
@@ -187,7 +187,7 @@ export const mockAddresses = {
     image: "/spork.png",
     score: 4.96,
     address: "0xe688b84b23f322a994a53dbf8e15fa82cdb71127",
-    reviews: 1934,
+    reviews: 29,
     category: "DAO",
     description:
       "SporkDAO is a member-owned community. $SPORK holders direct the community's events, investments, and interests. Holders may (in the future) receive a portion of the profits from ETHDenver, Bufficorn Ventures or the Colorado Jam Incubator.",
@@ -209,40 +209,40 @@ export const mockAddresses = {
 export const mockReviews = {
   "0x9c12939390052919aF3155f41Bf4160Fd3666A6f": [
     {
-      reviewer: "martinc.eth",
+      reviewer: "0xe688b84b23f322a994a53dbf8e15fa82cdb71127",
       image: "/1.png",
-      score: 4.88,
-      stars: 5,
+      score: 5.0,
+      stars: 500,
       review:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.",
-      createdAt: 1677976220816,
+        "Velodrome is a game-changer for DeFi enthusiasts! The platform offers unparalleled transparency, security, and user-friendliness. The team behind Velodrome is extremely responsive and committed to providing a seamless user experience. I highly recommend this protocol for anyone interested in DeFi.",
+      createdAt: 1678032357324,
     },
     {
-      reviewer: "martinc.eth",
+      reviewer: "0xa57Bd00134B2850B2a1c55860c9e9ea100fDd6CF",
       image: "/1.png",
-      score: 4.88,
-      stars: 5,
+      score: 4.68,
+      stars: 400,
       review:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.",
-      createdAt: 1677976220816,
+        "I've been using Velodrome for a few months now and it's been nothing but smooth sailing. The protocol offers high yields with minimal risk, and the user interface is intuitive and easy to use. The team is also very transparent about their operations, which adds to the overall sense of trustworthiness. UI could use a revamp.",
+      createdAt: 1678002357324,
     },
     {
-      reviewer: "martinc.eth",
+      reviewer: "0x9507c04B10486547584C37bCBd931B2a4FeE9A41",
       image: "/1.png",
-      score: 4.88,
-      stars: 5,
+      score: 3.78,
+      stars: 400,
       review:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.",
-      createdAt: 1677976220816,
+        "Velodrome is an innovative DeFi protocol that is paving the way for a more secure and transparent decentralized finance ecosystem. The platform's unique features, such as the Velo governance token and the VUSD stablecoin, make it stand out from other DeFi protocols. Sometimes liquidity issues in certain pairs.",
+      createdAt: 1677922357324,
     },
     {
-      reviewer: "martinc.eth",
+      reviewer: "0xCBD6832Ebc203e49E2B771897067fce3c58575ac",
       image: "/1.png",
-      score: 4.88,
-      stars: 5,
+      score: 1.0,
+      stars: 500,
       review:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.",
-      createdAt: 1677976220816,
+        "I've been a DeFi enthusiast for a while, and I must say that Velodrome is one of the best protocols I've used so far. The platform's user-friendly interface, high yields, and transparent operations make it a top choice for anyone looking to earn passive income in the DeFi space. Keep up the great work, Velodrome team!",
+      createdAt: 1677922357324,
     },
   ],
   "0xe688b84b23f322a994a53dbf8e15fa82cdb71127": [

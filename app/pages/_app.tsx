@@ -1,64 +1,48 @@
 import "@styles/globals.css";
 import type { AppProps } from "next/app";
-
 import {
-  getDefaultWallets,
-  RainbowKitProvider,
-  Theme,
-  darkTheme,
-} from "@rainbow-me/rainbowkit";
-import "@rainbow-me/rainbowkit/styles.css";
-import { mainnet, polygon, optimism, arbitrum } from "wagmi/chains";
+  EthereumClient,
+  modalConnectors,
+  walletConnectProvider,
+} from "@web3modal/ethereum";
+import { Web3Modal } from "@web3modal/react";
+import { mainnet, polygon, optimism, optimismGoerli } from "wagmi/chains";
 import { alchemyProvider } from "wagmi/providers/alchemy";
 import { publicProvider } from "wagmi/providers/public";
 
 import { useEffect, useState } from "react";
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
-import { configureChains, createClient, Chain, WagmiConfig } from "wagmi";
+import { configureChains, createClient, WagmiConfig } from "wagmi";
 import Head from "next/head";
 import Navbar from "@components/Navbar";
-import merge from "lodash.merge";
 
 import { selectAnatomy } from "@chakra-ui/anatomy";
 import { createMultiStyleConfigHelpers } from "@chakra-ui/react";
 
-const mantle = {
-  id: 5001,
-  name: "Mantle",
-  network: "mantle",
-  nativeCurrency: {
-    decimals: 18,
-    name: "mantle",
-    symbol: "BIT",
-  },
-  rpcUrls: {
-    public: { http: ["https://rpc.testnet.mantle.xyz	"] },
-    default: { http: ["https://rpc.testnet.mantle.xyz	"] },
-  },
-  blockExplorers: {
-    etherscan: {
-      name: "Wadsley",
-      url: "https://explorer.testnet.mantle.xyz/",
-    },
-    default: { name: "Wadsley", url: "https://explorer.testnet.mantle.xyz/" },
-  },
-} as const satisfies Chain;
-
-const { chains, provider } = configureChains(
-  [mainnet, polygon, optimism, arbitrum, mantle],
-  [alchemyProvider({ apiKey: process.env.ALCHEMY_ID } as any), publicProvider()]
+const { chains } = configureChains(
+  [optimismGoerli],
+  [
+    alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY } as any),
+    publicProvider(),
+  ]
 );
 
-const { connectors } = getDefaultWallets({
-  appName: "My RainbowKit App",
-  chains,
-});
+const { provider } = configureChains(chains, [
+  walletConnectProvider({ projectId: "e342e43e2ebcc35c13bb88a6e0da25a2" }),
+]);
 
 const wagmiClient = createClient({
   autoConnect: true,
-  connectors,
+  connectors: modalConnectors({
+    projectId: "e342e43e2ebcc35c13bb88a6e0da25a2",
+    version: "1", // or "2"
+    appName: "trustsight",
+    chains,
+  }),
   provider,
 });
+
+const ethereumClient = new EthereumClient(wagmiClient, chains);
 
 const { definePartsStyle, defineMultiStyleConfig } =
   createMultiStyleConfigHelpers(selectAnatomy.keys);
@@ -94,13 +78,6 @@ const theme = extendTheme({
   },
 });
 
-/* RainbowKit Theming */
-const customTheme = merge(darkTheme(), {
-  colors: {
-    accentColor: "#2A46EB",
-  },
-} as Theme);
-
 export default function App({ Component, pageProps, router }: AppProps) {
   const [mounted, setMounted] = useState(false);
 
@@ -108,8 +85,8 @@ export default function App({ Component, pageProps, router }: AppProps) {
   if (!mounted) return null;
 
   return (
-    <WagmiConfig client={wagmiClient}>
-      <RainbowKitProvider chains={chains} theme={customTheme}>
+    <>
+      <WagmiConfig client={wagmiClient}>
         <ChakraProvider theme={theme}>
           <Head>
             <title>TrustSight: Enabling Trust in Web3</title>
@@ -119,7 +96,12 @@ export default function App({ Component, pageProps, router }: AppProps) {
           <Navbar />
           <Component {...pageProps} key={router.route} />
         </ChakraProvider>
-      </RainbowKitProvider>
-    </WagmiConfig>
+      </WagmiConfig>
+
+      <Web3Modal
+        projectId="e342e43e2ebcc35c13bb88a6e0da25a2"
+        ethereumClient={ethereumClient}
+      />
+    </>
   );
 }

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import styles from "@styles/Navbar.module.css";
 import { HStack, Image } from "@chakra-ui/react";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { Web3Button } from "@web3modal/react";
 
 const Navbar = () => {
   return (
@@ -15,7 +15,7 @@ const Navbar = () => {
         ></Image>
       </Link>
 
-      <ConnectButton />
+      <Web3Button />
     </HStack>
   );
 };

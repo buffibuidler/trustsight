@@ -1,11 +1,12 @@
 import { Search2Icon } from "@chakra-ui/icons";
 import { HStack, VStack, Text, Input, Image, Box } from "@chakra-ui/react";
+import withTransition from "@components/withTransition";
 import { categories, featuredProjects, featuredReviews } from "@data/data";
 import styles from "@styles/Home.module.css";
 import { abridgeAddress } from "@utils/utils";
 import { useState } from "react";
 
-export default function Home() {
+function Home() {
   const [selected, setSelected] = useState("DAO");
   const isNavbar = false;
 
@@ -119,3 +120,5 @@ export default function Home() {
     </main>
   );
 }
+
+export default withTransition(Home);

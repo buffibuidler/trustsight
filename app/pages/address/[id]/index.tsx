@@ -9,10 +9,17 @@ import {
   Button,
   SimpleGrid,
   Textarea,
+  Spinner,
+  Link as ChakraLink,
 } from "@chakra-ui/react";
+import { ethers } from "ethers";
 import { useRouter } from "next/router";
 import { mockAddresses, mockReviews } from "@data/data";
-import { abridgeAddress, capitalizeFirstLetter } from "@utils/utils";
+import {
+  abridgeAddress,
+  capitalizeFirstLetter,
+  encodeRawKey,
+} from "@utils/utils";
 import { Select } from "@chakra-ui/react";
 import {
   Modal,
@@ -26,9 +33,35 @@ import {
 import { FaFlag } from "react-icons/fa";
 import Identicon from "react-identicons";
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
+import {
+  useAccount,
+  useContractWrite,
+  usePrepareContractWrite,
+  useProvider,
+} from "wagmi";
+import { useState } from "react";
+import abi from "@data/abi.json";
+import { useEffect } from "react";
+import SuccessLottie from "@components/SuccessLottie";
+import withTransition from "@components/withTransition";
+
+const TRUSTSIGHT_ADDRESS = "0x15AE58Fd3570e74EBe89fDBc897d31f9a6945377";
+const ATTESTATION_STATION = "0xEE36eaaD94d1Cc1d0eccaDb55C38bFfB6Be06C77";
 
 function Profile() {
+  const provider = useProvider();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [scoreMap, setScoreMap] = useState({ trust: 0 });
+  const [eventLogMap, setEventLogMap] = useState({});
+  const [trustScoresMap, setTrustScoresMap] = useState({});
+  const [attestationMap, setAttestationMap] = useState({ trust: { val: 0 } });
+  const [five, setFive] = useState(false);
+  const {
+    address: connectedAddress,
+    isConnecting,
+    isDisconnected,
+  } = useAccount();
+  // const { isOpen: isModalOpen, open, close, setDefaultChain } = useWeb3Modal();
 
   const router = useRouter();
   const { id: address } = router.query;
@@ -36,7 +69,137 @@ function Profile() {
   const account = mockAddresses[address as string];
   const reviewList = mockReviews[address as string];
 
-  if (!account) return null;
+  function handleSetFive() {
+    setFive(true);
+  }
+
+  const {
+    config,
+    error: prepareError,
+    isError: isPrepareError,
+  } = usePrepareContractWrite({
+    address: ATTESTATION_STATION,
+    abi,
+    functionName: "attest",
+    args: [Object.values(attestationMap)],
+  });
+
+  const { data, error, isError, isLoading, isSuccess, write } =
+    useContractWrite(config);
+
+  async function fetchTrustSightScores() {
+    if ("trustsight.trust" in eventLogMap) return;
+
+    const tempProvider = new ethers.providers.AlchemyProvider(
+      "optimism-goerli",
+      process.env.NEXT_PUBLIC_ALCHEMY_API_KEY
+    );
+
+    const attestationStation = new ethers.Contract(
+      ATTESTATION_STATION,
+      abi,
+      tempProvider
+    );
+    const eventKey = attestationStation.filters.AttestationCreated(
+      TRUSTSIGHT_ADDRESS,
+      address
+    );
+    const events = await attestationStation.queryFilter(eventKey, 3451375);
+
+    const fetchedEventMap = {};
+
+    events.forEach(({ args }) => {
+      const encodedKey = args[2];
+      const encodedValue = args[3];
+      const decodedKey = ethers.utils
+        .toUtf8String(encodedKey)
+        .split("\u0000")[0];
+      const decodedValue = Number(encodedValue);
+      fetchedEventMap[decodedKey] = decodedValue;
+    });
+
+    setEventLogMap(fetchedEventMap);
+    console.log("fetchedEventMap: ", fetchedEventMap);
+  }
+
+  async function fetchAllTrustScores() {
+    if ("trustsight.trust" in trustScoresMap) return;
+
+    const tempProvider = new ethers.providers.AlchemyProvider(
+      "optimism-goerli",
+      process.env.NEXT_PUBLIC_ALCHEMY_API_KEY
+    );
+
+    const attestationStation = new ethers.Contract(
+      ATTESTATION_STATION,
+      abi,
+      tempProvider
+    );
+
+    const trustKey = encodeRawKey(`trustsight.trust`);
+
+    const eventKey = attestationStation.filters.AttestationCreated(
+      null,
+      address,
+      trustKey
+    );
+
+    const events = await attestationStation.queryFilter(eventKey, 3451375);
+
+    const fetchedEventMap = {};
+
+    events.forEach(({ args }) => {
+      const creator = args[0];
+      if (creator === TRUSTSIGHT_ADDRESS) return;
+      const encodedValue = args[3];
+      const decodedValue = Number(encodedValue);
+      fetchedEventMap[creator] = decodedValue;
+    });
+
+    setTrustScoresMap(fetchedEventMap);
+    console.log("trustScoresMap: ", fetchedEventMap);
+  }
+
+  useEffect(() => {
+    if (!address) return;
+    fetchTrustSightScores();
+    fetchAllTrustScores();
+  }, [address]);
+
+  useEffect(() => {
+    if (!account) return;
+
+    const attestationDeepCopy = JSON.parse(JSON.stringify(attestationMap));
+
+    const trustKey = encodeRawKey(`trustsight.trust`);
+
+    const attestation = {
+      about: address,
+      key: trustKey,
+      val: 0,
+    };
+
+    attestationDeepCopy["trust"] = attestation;
+
+    account.subscores.forEach((subscore) => {
+      const attestationKey = encodeRawKey(
+        `trustsight.${account.category.toLowerCase()}.${subscore}`
+      );
+
+      const attestation = {
+        about: address,
+        key: attestationKey,
+        val: 0,
+      };
+
+      attestationDeepCopy[subscore] = attestation;
+    });
+    setAttestationMap(attestationDeepCopy);
+  }, [account, address]);
+
+  if (!account || !eventLogMap) return null;
+
+  console.log(Object.keys(eventLogMap));
 
   const {
     title,
@@ -50,6 +213,20 @@ function Profile() {
     flags,
   } = account;
 
+  function handleSetScore(score: number, type: string) {
+    const attestationDeepCopy = JSON.parse(JSON.stringify(attestationMap));
+
+    if (score === attestationDeepCopy[type]["val"]) {
+      attestationDeepCopy[type]["val"] = 0;
+      setAttestationMap(attestationDeepCopy);
+    } else {
+      attestationDeepCopy[type]["val"] = score * 100;
+      setAttestationMap(attestationDeepCopy);
+    }
+
+    console.log(attestationDeepCopy[type]);
+  }
+
   return (
     <main className={styles.main}>
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
@@ -59,79 +236,149 @@ function Profile() {
             <Text className={styles.yourReview}>Your Review</Text>
           </ModalHeader>
           <ModalCloseButton />
-          <ModalBody>
-            <VStack>
-              <HStack className={styles.modalTopSection}>
-                <HStack>
-                  <Image
-                    src={image}
-                    alt={image}
-                    className={styles.modalImage}
-                  ></Image>
-                  <VStack className={styles.modalTitleSection}>
-                    <Text className={styles.modalTitle}>{title}</Text>
-                    <Text className={styles.modalAddress}>
-                      {abridgeAddress(address as string)}
-                    </Text>
-                  </VStack>
-                </HStack>
-                <HStack gap={2}>
-                  <Text className={styles.trustScore}>Trust Score</Text>
+          {isSuccess && data ? (
+            <VStack className={styles.lottieContainer}>
+              <SuccessLottie />
+              <Text className={styles.subHeader} pb="1rem">
+                Review successfully submitted!
+              </Text>
+            </VStack>
+          ) : (
+            <ModalBody>
+              <VStack>
+                <HStack className={styles.modalTopSection}>
                   <HStack>
-                    {new Array(5).fill(0).map((_, idx) => (
-                      <Image
-                        src="/blankstar.png"
-                        alt="yo"
-                        key={idx}
-                        className={styles.largestar}
-                      />
-                    ))}
-                  </HStack>
-                </HStack>
-              </HStack>
-              <Box h="10px"></Box>
-              <HStack>
-                {category && (
-                  <VStack className={styles.categoryPill}>
-                    <Text className={styles.categoryPillText}>{category}</Text>
-                  </VStack>
-                )}
-                <Text className={styles.subHeader}>
-                  Category scores (optional)
-                </Text>
-              </HStack>
-              <Box h="10px"></Box>
-              {subscores && subscores.length > 0 && (
-                <SimpleGrid columns={2} gap={6}>
-                  {subscores.map((val) => (
-                    <HStack key={val}>
-                      <Text className={styles.subHeader} w="130px">
-                        {capitalizeFirstLetter(val)}
+                    <Image
+                      src={image}
+                      alt={image}
+                      className={styles.modalImage}
+                    ></Image>
+                    <VStack className={styles.modalTitleSection}>
+                      <Text className={styles.modalTitle}>{title}</Text>
+                      <Text className={styles.modalAddress}>
+                        {abridgeAddress(address as string)}
                       </Text>
-                      <HStack>
-                        {new Array(5).fill(0).map((_, idx) => (
+                    </VStack>
+                  </HStack>
+                  <HStack gap={2}>
+                    <Text className={styles.trustScore}>Trust Score</Text>
+                    <HStack>
+                      {new Array(attestationMap["trust"]["val"] / 100)
+                        .fill(0)
+                        .map((_, idx) => (
+                          <Image
+                            src="/star.png"
+                            alt="yo"
+                            key={`star-${idx}`}
+                            className={styles.largestar}
+                            onClick={() => handleSetScore(idx + 1, "trust")}
+                          />
+                        ))}
+                      {new Array(5 - attestationMap["trust"]["val"] / 100)
+                        .fill(0)
+                        .map((_, idx) => (
                           <Image
                             src="/blankstar.png"
                             alt="yo"
-                            key={idx}
+                            key={`blankstar-${idx}`}
                             className={styles.largestar}
+                            onClick={() =>
+                              handleSetScore(
+                                attestationMap["trust"]["val"] / 100 + idx + 1,
+                                "trust"
+                              )
+                            }
                           />
                         ))}
-                      </HStack>
                     </HStack>
-                  ))}
-                </SimpleGrid>
-              )}
-              <Box h="15px"></Box>
-              <VStack w="100%" alignItems="flex-start">
-                <Text className={styles.trustScore}>Comments</Text>
-                <Box h="5px"></Box>
-                <Textarea placeholder="Write your review" />
+                  </HStack>
+                </HStack>
+                <Box h="10px"></Box>
+                <HStack>
+                  {category && (
+                    <VStack className={styles.categoryPill}>
+                      <Text className={styles.categoryPillText}>
+                        {category}
+                      </Text>
+                    </VStack>
+                  )}
+                  <Text className={styles.subHeader}>
+                    Category scores (optional)
+                  </Text>
+                </HStack>
+                <Box h="10px"></Box>
+                {subscores && subscores.length > 0 && (
+                  <SimpleGrid columns={2} gap={6}>
+                    {subscores.map((type) => (
+                      <HStack key={type}>
+                        <Text className={styles.subHeader} w="130px">
+                          {capitalizeFirstLetter(type)}
+                        </Text>
+                        <HStack>
+                          {new Array(
+                            type in attestationMap
+                              ? attestationMap[type]["val"] / 100
+                              : 0
+                          )
+                            .fill(0)
+                            .map((_, idx) => (
+                              <Image
+                                src="/star.png"
+                                alt="yo"
+                                key={`star-${idx}`}
+                                className={styles.largestar}
+                                onClick={() => handleSetScore(idx + 1, type)}
+                              />
+                            ))}
+                          {new Array(
+                            type in attestationMap
+                              ? 5 - attestationMap[type]["val"] / 100
+                              : 5
+                          )
+                            .fill(0)
+                            .map((_, idx) => (
+                              <Image
+                                src="/blankstar.png"
+                                alt="yo"
+                                key={`blankstar-${idx}`}
+                                className={styles.largestar}
+                                onClick={() =>
+                                  handleSetScore(
+                                    attestationMap[type]["val"] / 100 + idx + 1,
+                                    type
+                                  )
+                                }
+                              />
+                            ))}
+                        </HStack>
+                      </HStack>
+                    ))}
+                  </SimpleGrid>
+                )}
+                <Box h="15px"></Box>
+                <VStack w="100%" alignItems="flex-start">
+                  <Text className={styles.trustScore}>Comments</Text>
+                  <Box h="5px"></Box>
+                  <Textarea placeholder="Write your review" />
+                </VStack>
               </VStack>
-            </VStack>
-          </ModalBody>
+            </ModalBody>
+          )}
           <ModalFooter className={styles.modalFooter}>
-            <Button className={styles.submitButton}>Submit review</Button>
+            {isSuccess && data ? (
+              <ChakraLink
+                isExternal
+                href={`https://goerli-optimism.etherscan.io/tx/${data.hash}`}
+              >
+                <Button className={styles.submitButton}>
+                  View Transaction
+                </Button>
+              </ChakraLink>
+            ) : (
+              <Button className={styles.submitButton} onClick={() => write?.()}>
+                {isLoading ? <Spinner color="white" /> : "Submit Review"}
+              </Button>
+            )}
           </ModalFooter>
         </ModalContent>
       </Modal>
@@ -151,8 +398,8 @@ function Profile() {
               />
             )}
             <Box h="10px"></Box>
-            <VStack>
-              <HStack onClick={onOpen}>
+            <VStack onClick={onOpen} cursor="pointer">
+              <HStack>
                 {new Array(5).fill(0).map((_, idx) => (
                   <Image
                     src="/blankstar.png"
@@ -183,9 +430,11 @@ function Profile() {
                       Report this address
                     </Text>
                   </HStack>
-                  <Text className={styles.reviewsSubtext}>
-                    Reported by {flags} users
-                  </Text>
+                  {flags && (
+                    <Text className={styles.reviewsSubtext}>
+                      Reported by {flags} users
+                    </Text>
+                  )}
                 </VStack>
               </HStack>
             </HStack>
@@ -222,7 +471,9 @@ function Profile() {
                   className={styles.largestar}
                 />
               ))}
-              <Text className={styles.scoreText}>{score}</Text>
+              <Text className={styles.scoreText}>
+                {eventLogMap["trustsight.trust"] / 100}
+              </Text>
               <Text className={styles.reviewsText}>· {reviews} reviews</Text>
             </HStack>
             <Box h="1px"></Box>
@@ -248,9 +499,20 @@ function Profile() {
                       {capitalizeFirstLetter(val)}
                     </Text>
                     <Box className={styles.scoreBarContainer}>
-                      <Box className={styles.scoreBar}></Box>
+                      <Box
+                        className={styles.scoreBar}
+                        width={`${
+                          eventLogMap[
+                            `trustsight.${category.toLowerCase()}.${val}`
+                          ] / 5
+                        }%`}
+                      ></Box>
                     </Box>
-                    <Text className={styles.categoryScore}>{account[val]}</Text>
+                    <Text className={styles.categoryScore}>
+                      {eventLogMap[
+                        `trustsight.${category.toLowerCase()}.${val}`
+                      ] / 100}
+                    </Text>
                   </HStack>
                 ))}
             </VStack>
@@ -261,14 +523,15 @@ function Profile() {
               <Text className={styles.filterLabel}>Sort by:</Text>
               <VStack className={styles.select}>
                 <Select variant="custom">
-                  <option value="option1">Most recent</option>
                   <option value="option2">Most trusted</option>
+                  <option value="option1">Most recent</option>
                 </Select>
               </VStack>
               <Box w="10px"></Box>
               <Text className={styles.filterLabel}>Filter by:</Text>
               <VStack className={styles.select}>
-                <Select variant="custom">
+                <Select variant="custom" onChange={handleSetFive}>
+                  <option value="option1">Show all</option>
                   <option value="option1">5 stars</option>
                   <option value="option1">4 stars</option>
                   <option value="option1">3 stars</option>
@@ -301,38 +564,35 @@ function Profile() {
               <TabPanels>
                 <TabPanel>
                   <VStack gap={5}>
-                    {reviewList ? (
-                      reviewList.map(
-                        (
-                          { reviewer, image, score, stars, review, createdAt },
-                          idx
-                        ) => (
-                          <HStack key={idx} className={styles.reviewContainer}>
-                            <VStack className={styles.leftReviewSection}>
+                    {/* {Object.entries(trustScoresMap).length > 0 ? (
+                      Object.entries(trustScoresMap).map(([key, value]) => (
+                        <HStack key={key} className={styles.reviewContainer}>
+                          <VStack className={styles.leftReviewSection}>
+                            <Identicon
+                              string={key as string}
+                              className={styles.reviewImage}
+                            />
+                            <Text className={styles.reviewReviewer}>
+                              {abridgeAddress(key)}
+                            </Text>
+                            <HStack>
                               <Image
-                                alt={reviewer}
-                                src={image}
-                                className={styles.reviewImage}
-                              />
-                              <Text className={styles.reviewReviewer}>
-                                {reviewer}
+                                alt="yo"
+                                src="/blackstar.png"
+                                className={styles.blackstar}
+                                opacity={0.5}
+                              ></Image>
+                              <Text className={styles.reviewScore}>
+                                {score}
                               </Text>
+                            </HStack>
+                          </VStack>
+                          <VStack className={styles.rightReviewSection}>
+                            <HStack className={styles.rightTopSection}>
                               <HStack>
-                                <Image
-                                  alt="yo"
-                                  src="/blackstar.png"
-                                  className={styles.blackstar}
-                                  opacity={0.5}
-                                ></Image>
-                                <Text className={styles.reviewScore}>
-                                  {score}
-                                </Text>
-                              </HStack>
-                            </VStack>
-                            <VStack className={styles.rightReviewSection}>
-                              <HStack className={styles.rightTopSection}>
-                                <HStack>
-                                  {new Array(stars).fill(0).map((_, idx) => (
+                                {new Array((value as number) / 100)
+                                  .fill(0)
+                                  .map((_, idx) => (
                                     <Image
                                       src="/star.png"
                                       alt="yo"
@@ -340,67 +600,125 @@ function Profile() {
                                       className={styles.star}
                                     />
                                   ))}
-                                  {new Array(5 - stars)
-                                    .fill(0)
-                                    .map((_, idx) => (
-                                      <Image
-                                        src="/greystar.png"
-                                        alt="yo"
-                                        key={idx}
-                                        className={styles.star}
-                                      />
-                                    ))}
-                                </HStack>
-                                <Text className={styles.reviewDate}>
-                                  {new Date(createdAt).toDateString()}
-                                </Text>
+                                {new Array(5 - (value as number) / 100)
+                                  .fill(0)
+                                  .map((_, idx) => (
+                                    <Image
+                                      src="/greystar.png"
+                                      alt="yo"
+                                      key={idx}
+                                      className={styles.star}
+                                    />
+                                  ))}
                               </HStack>
-                              <Text className={styles.reviewDescription}>
-                                {review}
+                              <Text className={styles.reviewDate}>
+                                {new Date(createdAt).toDateString()}
                               </Text>
-                            </VStack>
-                          </HStack>
-                        )
-                      )
+                            </HStack>
+                            <Text className={styles.reviewDescription}>
+                              Unavailable
+                            </Text>
+                          </VStack>
+                        </HStack>
+                      ))
                     ) : (
                       <Text>No reviews available.</Text>
-                    )}
+                    )} */}
+                    {reviewList
+                      .filter((val) => (five ? val.stars === 500 : true))
+                      .map(({ reviewer, score, stars, review, createdAt }) => (
+                        <HStack
+                          key={reviewer}
+                          className={styles.reviewContainer}
+                        >
+                          <VStack className={styles.leftReviewSection}>
+                            <Identicon
+                              string={reviewer as string}
+                              className={styles.reviewImage}
+                            />
+                            <Text className={styles.reviewReviewer}>
+                              {abridgeAddress(reviewer)}
+                            </Text>
+                            <HStack>
+                              <Image
+                                alt="yo"
+                                src="/blackstar.png"
+                                className={styles.blackstar}
+                                opacity={0.5}
+                              ></Image>
+                              <Text className={styles.reviewScore}>
+                                {score}
+                              </Text>
+                            </HStack>
+                          </VStack>
+                          <VStack className={styles.rightReviewSection}>
+                            <HStack className={styles.rightTopSection}>
+                              <HStack>
+                                {new Array(Math.round(stars / 100))
+                                  .fill(0)
+                                  .map((_, idx) => (
+                                    <Image
+                                      src="/star.png"
+                                      alt="yo"
+                                      key={idx}
+                                      className={styles.star}
+                                    />
+                                  ))}
+                                {new Array(5 - Math.round(stars / 100))
+                                  .fill(0)
+                                  .map((_, idx) => (
+                                    <Image
+                                      src="/greystar.png"
+                                      alt="yo"
+                                      key={idx}
+                                      className={styles.star}
+                                    />
+                                  ))}
+                              </HStack>
+                              <Text className={styles.reviewDate}>
+                                {new Date(createdAt).toDateString()}
+                              </Text>
+                            </HStack>
+                            <Text className={styles.reviewDescription}>
+                              {review}
+                            </Text>
+                          </VStack>
+                        </HStack>
+                      ))}
                   </VStack>
                 </TabPanel>
                 <TabPanel>
                   <VStack gap={5}>
-                    {reviewList ? (
-                      reviewList.map(
-                        (
-                          { reviewer, image, score, stars, review, createdAt },
-                          idx
-                        ) => (
-                          <HStack key={idx} className={styles.reviewContainer}>
-                            <VStack className={styles.leftReviewSection}>
+                    {Object.entries(trustScoresMap).length > 0 ? (
+                      Object.entries(trustScoresMap).map(([key, value]) => (
+                        <HStack key={key} className={styles.reviewContainer}>
+                          <VStack className={styles.leftReviewSection}>
+                            <Image
+                              alt={key}
+                              src={image}
+                              className={styles.reviewImage}
+                            />
+                            <Text className={styles.reviewReviewer}>
+                              {abridgeAddress(key)}
+                            </Text>
+                            <HStack>
                               <Image
-                                alt={reviewer}
-                                src={image}
-                                className={styles.reviewImage}
-                              />
-                              <Text className={styles.reviewReviewer}>
-                                {reviewer}
+                                alt="yo"
+                                src="/blackstar.png"
+                                className={styles.blackstar}
+                                opacity={0.5}
+                              ></Image>
+                              <Text className={styles.reviewScore}>
+                                {score}
                               </Text>
-                              <HStack>
-                                <Image
-                                  alt="yo"
-                                  src="/blackstar.png"
-                                  className={styles.blackstar}
-                                  opacity={0.5}
-                                ></Image>
-                                <Text className={styles.reviewScore}>
-                                  {score}
-                                </Text>
-                              </HStack>
-                            </VStack>
-                            <VStack className={styles.rightReviewSection}>
-                              <HStack className={styles.rightTopSection}>
-                                <HStack>
-                                  {new Array(stars).fill(0).map((_, idx) => (
+                            </HStack>
+                          </VStack>
+                          <VStack className={styles.rightReviewSection}>
+                            <HStack className={styles.rightTopSection}>
+                              <HStack w="100%">
+                                {new Array((value as number) / 100)
+                                  .fill(0)
+                                  .map((_, idx) => (
                                     <Image
                                       src="/star.png"
                                       alt="yo"
@@ -408,28 +726,27 @@ function Profile() {
                                       className={styles.star}
                                     />
                                   ))}
-                                  {new Array(5 - stars)
-                                    .fill(0)
-                                    .map((_, idx) => (
-                                      <Image
-                                        src="/greystar.png"
-                                        alt="yo"
-                                        key={idx}
-                                        className={styles.star}
-                                      />
-                                    ))}
-                                </HStack>
-                                <Text className={styles.reviewDate}>
-                                  {new Date(createdAt).toDateString()}
-                                </Text>
+                                {new Array(5 - (value as number) / 100)
+                                  .fill(0)
+                                  .map((_, idx) => (
+                                    <Image
+                                      src="/greystar.png"
+                                      alt="yo"
+                                      key={idx}
+                                      className={styles.star}
+                                    />
+                                  ))}
                               </HStack>
-                              <Text className={styles.reviewDescription}>
-                                {review}
+                              <Text className={styles.reviewDate}>
+                                {new Date(createdAt).toDateString()}
                               </Text>
-                            </VStack>
-                          </HStack>
-                        )
-                      )
+                            </HStack>
+                            <Text className={styles.reviewDescription}>
+                              Unavailable
+                            </Text>
+                          </VStack>
+                        </HStack>
+                      ))
                     ) : (
                       <Text>No reviews available.</Text>
                     )}
@@ -444,4 +761,4 @@ function Profile() {
   );
 }
 
-export default Profile;
+export default withTransition(Profile);

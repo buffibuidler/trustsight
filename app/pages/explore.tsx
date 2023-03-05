@@ -1,10 +1,11 @@
 import { HStack, VStack, Text, Image, Box, SimpleGrid } from "@chakra-ui/react";
+import withTransition from "@components/withTransition";
 import { categories, defiProjects } from "@data/data";
 import styles from "@styles/Home.module.css";
 import { abridgeAddress } from "@utils/utils";
 import { useState } from "react";
 
-export default function Home() {
+function Home() {
   const [selected, setSelected] = useState("DeFi");
   const isNavbar = false;
 
@@ -65,3 +66,5 @@ export default function Home() {
     </main>
   );
 }
+
+export default withTransition(Home);

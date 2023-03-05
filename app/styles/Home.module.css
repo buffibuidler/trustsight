@@ -398,8 +398,9 @@
 }
 
 .reviewImage {
-  width: 56px;
-  height: 55px;
+  width: 56px !important;
+  height: 55px !important;
+  border-radius: 10px !important;
 }
 
 .star {
@@ -594,7 +595,6 @@
 
 .scoreBar {
   position: absolute;
-  width: 75%;
   height: 100%;
   background-color: #fecd27;
   border-radius: 10px;
@@ -620,16 +620,23 @@
 }
 
 .reviewContainer {
+  width: 100%;
   padding: 2rem;
   background: #ffffff;
   box-shadow: 0px 0px 10px 10px rgba(0, 0, 0, 0.03);
   border-radius: 20px;
+  align-items: flex-start !important;
 }
 
 .leftReviewSection {
   align-items: flex-start !important;
   gap: 0 !important;
   padding-right: 1rem;
+}
+
+.rightReviewSection {
+  width: 100%;
+  align-items: flex-start !important;
 }
 
 .rightTopSection {
@@ -665,10 +672,11 @@
 }
 
 .reviewDescription {
+  width: 100%;
   font-style: normal;
   font-weight: 500;
-  font-size: 14px;
-  line-height: 18px;
+  font-size: 16px;
+  line-height: 22px;
 
   color: rgba(0, 0, 0, 0.5);
 }
