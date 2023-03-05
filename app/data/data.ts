@@ -9,7 +9,7 @@ export const categories = [
   "Infrastructure",
   "Wallet",
   "Identity",
-  "ReFi",
+  "More",
 ];
 
 export const featuredProjects = [
@@ -50,7 +50,7 @@ export const featuredReviews = [
     reviewer: "martinc.eth",
     recipient: "Nouns DAO",
     review:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.",
+      "The Nouns DAO is a truly unique and innovative platform that is changing the game in the world of decentralized finance. The team is incredibly talented and dedicated, and their vision for a more community-driven and collaborative ecosystem is truly inspiring. Highly recommend!",
   },
   {
     image: "/2.png",
@@ -247,7 +247,7 @@ export const mockReviews = {
   ],
   "0xe688b84b23f322a994a53dbf8e15fa82cdb71127": [
     {
-      reviewer: "martinc.eth",
+      reviewer: "0xe688b84b23f322a994a53dbf8e15fa82cdb71127",
       image: "/1.png",
       score: 4.88,
       stars: 5,
@@ -256,7 +256,7 @@ export const mockReviews = {
       createdAt: 1677976220816,
     },
     {
-      reviewer: "martinc.eth",
+      reviewer: "0xCBD6832Ebc203e49E2B771897067fce3c58575ac",
       image: "/1.png",
       score: 4.88,
       stars: 5,
@@ -265,16 +265,7 @@ export const mockReviews = {
       createdAt: 1677976220816,
     },
     {
-      reviewer: "martinc.eth",
-      image: "/1.png",
-      score: 4.88,
-      stars: 5,
-      review:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.",
-      createdAt: 1677976220816,
-    },
-    {
-      reviewer: "martinc.eth",
+      reviewer: "0xa57Bd00134B2850B2a1c55860c9e9ea100fDd6CF",
       image: "/1.png",
       score: 4.88,
       stars: 5,
@@ -285,30 +276,30 @@ export const mockReviews = {
   ],
   "0x14e262BF93FDDD01F605baE7c39A87B02234Ee03": [
     {
-      reviewer: "martinc.eth",
+      reviewer: "0xe688b84b23f322a994a53dbf8e15fa82cdb71127",
+
       image: "/1.png",
-      score: 4.88,
+      score: 5.0,
       stars: 0,
       review:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.",
+        "BEWARE fellow bufficorns! this guy asked me to mint his project and i got scammed my favorite NFTs. DON'T approve the transaction",
       createdAt: 1677976220816,
     },
     {
-      reviewer: "martinc.eth",
+      reviewer: "0xCBD6832Ebc203e49E2B771897067fce3c58575ac",
       image: "/1.png",
       score: 4.88,
       stars: 0,
-      review:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.",
+      review: "give me my NFTs back you scammer.",
       createdAt: 1677976220816,
     },
     {
-      reviewer: "martinc.eth",
+      reviewer: "0xa57Bd00134B2850B2a1c55860c9e9ea100fDd6CF",
       image: "/1.png",
-      score: 4.88,
+      score: 4.28,
       stars: 0,
       review:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.",
+        "STAY AWAY FROM THIS SCAMMER ADDRESS. They have it hooked up to a setApprovalForAll with your most expensive NFT collection using Seaport.",
       createdAt: 1677976220816,
     },
   ],

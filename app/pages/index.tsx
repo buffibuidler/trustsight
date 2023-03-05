@@ -4,9 +4,11 @@ import withTransition from "@components/withTransition";
 import { categories, featuredProjects, featuredReviews } from "@data/data";
 import styles from "@styles/Home.module.css";
 import { abridgeAddress } from "@utils/utils";
+import { useRouter } from "next/router";
 import { useState } from "react";
 
 function Home() {
+  const router = useRouter();
   const [selected, setSelected] = useState("DAO");
   const isNavbar = false;
 
@@ -38,7 +40,11 @@ function Home() {
               className={`${styles.subheader} ${
                 selected === value && styles.selected
               }`}
-              onClick={() => setSelected(value)}
+              onClick={() => {
+                if (value === "More") router.push("/explore");
+
+                setSelected(value);
+              }}
               cursor="pointer"
             >
               {value}

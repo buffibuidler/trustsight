@@ -18,6 +18,7 @@ import Navbar from "@components/Navbar";
 
 import { selectAnatomy } from "@chakra-ui/anatomy";
 import { createMultiStyleConfigHelpers } from "@chakra-ui/react";
+import Script from "next/script";
 
 const { chains } = configureChains(
   [optimismGoerli],
@@ -59,6 +60,12 @@ const selectTheme = defineMultiStyleConfig({
   variants: { custom },
 });
 
+declare global {
+  interface Window {
+    Cypher?: any;
+  }
+}
+
 const theme = extendTheme({
   styles: {
     global: {
@@ -86,6 +93,9 @@ export default function App({ Component, pageProps, router }: AppProps) {
 
   return (
     <>
+      <div>
+        <Script src="https://public.cypherd.io/js/onboardingsdk.js"></Script>
+      </div>
       <WagmiConfig client={wagmiClient}>
         <ChakraProvider theme={theme}>
           <Head>

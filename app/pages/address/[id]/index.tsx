@@ -44,6 +44,7 @@ import abi from "@data/abi.json";
 import { useEffect } from "react";
 import SuccessLottie from "@components/SuccessLottie";
 import withTransition from "@components/withTransition";
+import { useBalance } from "wagmi";
 
 const TRUSTSIGHT_ADDRESS = "0x15AE58Fd3570e74EBe89fDBc897d31f9a6945377";
 const ATTESTATION_STATION = "0xEE36eaaD94d1Cc1d0eccaDb55C38bFfB6Be06C77";
@@ -72,6 +73,9 @@ function Profile() {
   function handleSetFive() {
     setFive(true);
   }
+  const { data: balance } = useBalance({
+    address: connectedAddress,
+  });
 
   const {
     config,
@@ -167,7 +171,7 @@ function Profile() {
   }, [address]);
 
   useEffect(() => {
-    if (!account) return;
+    if (!account || !account.subscores) return;
 
     const attestationDeepCopy = JSON.parse(JSON.stringify(attestationMap));
 
@@ -225,6 +229,26 @@ function Profile() {
     }
 
     console.log(attestationDeepCopy[type]);
+  }
+
+  function triggerCypher() {
+    window.Cypher({
+      address: connectedAddress,
+      targetChainIdHex: "0xa",
+      requiredTokenBalance: 0.01,
+      isTestnet: false,
+      callBack: () => {
+        console.log("callBack called");
+      },
+    });
+  }
+
+  function handleReview() {
+    if (balance.value.lte(ethers.utils.parseEther("0.01"))) {
+      triggerCypher();
+    } else {
+      onOpen();
+    }
   }
 
   return (
@@ -398,7 +422,7 @@ function Profile() {
               />
             )}
             <Box h="10px"></Box>
-            <VStack onClick={onOpen} cursor="pointer">
+            <VStack onClick={handleReview} cursor="pointer">
               <HStack>
                 {new Array(5).fill(0).map((_, idx) => (
                   <Image
